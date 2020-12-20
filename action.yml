@@ -1,0 +1,28 @@
+name: Setup detekt
+description: Installs a specific version of detekt into the GitHub Actions tool cache
+
+author: Peter Murray
+
+inputs:
+  detekt_version:
+    description: The version of detekt
+    required: true
+    default: latest
+
+  add_to_path:
+    description: Flag for adding detekt to the PATH
+    required: true
+    default: true
+
+  token:
+    description: Use to pull detekt distributions from the releases of detekt.
+    required: true
+    default: ${{ github.token }}
+
+runs:
+  using: node12
+  main: dist/index.js
+
+branding:
+  color: green
+  icon: alert-circle

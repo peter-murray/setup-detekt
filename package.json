@@ -1,0 +1,21 @@
+{
+  "name": "setup-detekt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "ncc build -m -o dist src/index.js"
+  },
+  "keywords": [],
+  "author": "Peter Murray",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.2.6",
+    "@actions/github": "^4.0.0",
+    "@actions/http-client": "^1.0.9",
+    "@actions/tool-cache": "^1.6.1"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.26.1"
+  }
+}
