@@ -7,7 +7,7 @@ inputs:
   detekt_version:
     description: The version of detekt
     required: true
-    default: latest
+    default: 1.15.0
 
   add_to_path:
     description: Flag for adding detekt to the PATH
@@ -19,10 +19,14 @@ inputs:
     required: true
     default: ${{ github.token }}
 
+outputs:
+  detekt:
+    description: The path to the detekt executable
+
 runs:
   using: node12
   main: dist/index.js
 
 branding:
   color: green
-  icon: alert-circle
+  icon: check-circle

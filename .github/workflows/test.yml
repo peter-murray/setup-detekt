@@ -1,18 +1,42 @@
 name: Test
 
-runs-on:
-  workflow_dispatch:
+on:
+  push:
 
 jobs:
   test:
     name: Test Action
-    runs-on: ubuntu-latest
+
+    strategy:
+      max-parallel: 6
+      fail-fast: true
+      matrix:
+        os:
+          - ubuntu-18.04
+          - ubuntu-20.04
+          - windows-latest
+          - macos-latest
+        detekt_version:
+          - 1.15.0
+          - 1.14.2
+          - v1.13.0
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout Sources
         uses: actions/checkout@v2
 
       - name: Run Action
+        id: get_detekt
         uses: ./
-          with:
-            detekt_version: 1.15.0
+        with:
+          detekt_version: ${{ matrix.detekt_version }}
+
+      - name: Report location of tool
+        run: |
+          echo "detekt ${{ steps.get_detekt.outputs.detekt }}"
+
+      - name: Run detekt
+        run: |
+          detekt --version
