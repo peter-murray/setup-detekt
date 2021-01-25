@@ -29,7 +29,7 @@ the `detekt` file asset in the releases.
 
 ## Examples
 
-Setup detekt version `0.15.0` and then invoke it.
+Setup detekt version `1.15.0` and then invoke it.
 
 ```yml
 name: Install detekt
@@ -45,7 +45,7 @@ jobs:
       - name: Setup detekt
         uses: peter-murray/setup-detekt@v1
         with:
-          detekt_version: 0.15.0
+          detekt_version: 1.15.0
 
       - name: Run detekt
         run: detekt --version
