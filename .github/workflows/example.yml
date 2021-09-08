@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Setup detekt
-        uses: peter-murray/setup-detekt@v1
+        uses: ./
         with:
           detekt_version: ${{ env.DETEKT_RELEASE_TAG }}
 
