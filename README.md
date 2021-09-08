@@ -26,7 +26,7 @@ executable that you need to call is `detekt-cli` and not `detekt` as is was in p
 
 ## Parameters
 
-* `detekt_version`: The version of detekt to download, defaults to `1.15.0`, will be changed match the the latest version in the future
+* `detekt_version`: The version of detekt to download, defaults to `1.18`, will be changed match the the latest version in the future
 * `add_to_path`: A boolean flag indicating whether or not to add detekt to the PATH, defaults to `true`
 
 
