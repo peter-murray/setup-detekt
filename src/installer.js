@@ -10,10 +10,10 @@ const OWNER = 'detekt';
 const REPO = 'detekt';
 
 module.exports.getDetekt = async function getDetekt(versionSpec, token) {
-  let toolPath = tc.find('detekt', versionSpec);
+  let toolPath = tc.find('detekt', versionSpec, 'all');
   if (!toolPath) {
     // Try to resolve the CLI variant
-    toolPath = tc.find('detekt-cli', versionSpec);
+    toolPath = tc.find('detekt-cli', versionSpec, 'all');
     if (toolPath) {
       toolPath = path.join(toolPath, 'bin');
     }
@@ -48,7 +48,7 @@ module.exports.getDetekt = async function getDetekt(versionSpec, token) {
       // Ensure that if we have the executable version of the release, the execution bit is set
       await fs.chmod(downloadPath, 0o755);
       core.info(`Adding detekt binary to cache`);
-      toolPath = await tc.cacheFile(downloadPath, 'detekt', 'detekt', release.version);
+      toolPath = await tc.cacheFile(downloadPath, 'detekt', 'detekt', release.version, 'all');
 
     } else if (release.detektBundle) {
       const url = release.detektBundle.url;
@@ -57,8 +57,8 @@ module.exports.getDetekt = async function getDetekt(versionSpec, token) {
 
       const extractedDir = await tc.extractZip(downloadPath);
       core.info(`Adding detekt-cli directory to cache`);
-      toolPath = await tc.cacheDir(extractedDir, 'detekt-cli', release.version);
-      toolPath = path.join(toolPath, 'bin');
+      toolPath = await tc.cacheDir(extractedDir, 'detekt-cli', release.version, 'all');
+      toolPath = path.join(toolPath, `detekt-cli-${release.version}`, 'bin');
     } else {
       throw new Error(`Unknown type of detekt tool type, currently unsupported variant`);
     }
