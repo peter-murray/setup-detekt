@@ -12,8 +12,16 @@ The action supports and is tested on Windows, Ubuntu and MacOS.
 This action utilizes the GitHub Actions tool cache functionality so that when downloading version of detekt from https://github.com/detekt/detekt
 they are cached for re-use to prevent unnecessary downloading if already retrieved in another job.
 
-The Action will process the releases from the https://github.com/detekt/detekt repository, showing only versions that provide
+The Action will process the releases from the https://github.com/detekt/detekt repository, showing only versions that provide 
 the `detekt` file asset in the releases.
+
+
+## Change in command line v0.17+
+
+Since version 0.17 and greater the release bundles for detekt were changed to move to a CLI provided zip file instead of a completely self-contained binary.
+
+When using versions `0.17+` of detekt, this action will download and wire the CLI bundle in to the PATH via the GitHub Actions tool-cache and as such the
+executable that you need to call is `detekt-cli` and not `detekt` as is was in previous versions.
 
 
 ## Parameters
@@ -29,7 +37,7 @@ the `detekt` file asset in the releases.
 
 ## Examples
 
-Setup detekt version `1.15.0` and then invoke it.
+Setup detekt version `1.18` and then invoke it.
 
 ```yml
 name: Install detekt
@@ -45,13 +53,39 @@ jobs:
       - name: Setup detekt
         uses: peter-murray/setup-detekt@v1
         with:
-          detekt_version: 1.15.0
+          detekt_version: 1.18
 
       - name: Run detekt
-        run: detekt --version
+        run: detekt-cli --version
 ```
 
-Setup detekt version `1.13.0`, not installing it on the PATH and then invoking it via reference
+Setup detekt version `1.18` but not put it on the PATH, and then invoke it.
+
+```yml
+name: Install detekt
+
+on:
+  workflow_dispatch:
+
+jobs:
+  detekt:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup detekt
+        uses: peter-murray/setup-detekt@v1
+        with:
+          detekt_version: 1.18
+          add_to_path: false
+
+      - name: Run detekt
+        run: ${{ steps.setup_detekt.outputs.detekt }}/detekt-cli --version
+```
+
+Note, on Windows runners you would need to use `detekt-cli.bat` instead of `detekt-cli` above.
+
+
+Setup detekt version `1.15`, not installing it on the PATH and then invoking it via reference (this is an executable release version)
 
 ```yml
 name: Install detekt
@@ -68,7 +102,7 @@ jobs:
         id: setup_detekt
         uses: peter-murray/setup-detekt@v1
         with:
-          detekt_version: v0.13.0
+          detekt_version: v0.15
           add_to_path: false
 
       - name: Run detekt
