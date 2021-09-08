@@ -1,7 +1,9 @@
-const { expect } = require('chai');
+const chai = require('chai');
 const os = require('os');
 const installer = require('./installer');
 
+chai.use(require('chai-string'));
+const expect = chai.expect;
 
 describe('Detekt installer', () => {
 
@@ -14,11 +16,11 @@ describe('Detekt installer', () => {
       process.env.RUNNER_TEMP = os.tmpdir();
     })
 
-    it('should get version v1.18', async () => {
+    it('should get version 1.18', async () => {
       const toolpath = await installer.getDetekt('1.18', testToken());
       console.log(toolpath);
-      expect(toolpath).to.include('v1.18');
-      expect(toolpath).to.endWith('bin');
+      expect(toolpath).to.include('1.18');
+      expect(toolpath).to.endsWith('bin');
     });
   });
 

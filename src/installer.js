@@ -25,20 +25,12 @@ module.exports.getDetekt = async function getDetekt(versionSpec, token) {
     core.info(`Attempting to resolve and download detekt version ${versionSpec}`);
 
     const releases = await this.getReleaseVersions(token);
-    const matched = matchVersion(releases, versionSpec);
+    const release = matchVersion(releases, versionSpec);
 
-    if (matched.length === 0) {
+    if (!release) {
       core.setFailed(`Unable to resolve specified version of detekt: ${versionSpec}`);
       return;
     }
-
-    //TODO may have multiple versions, if so need to select the latest of the matches
-    core.info(`Matched versions:`);
-    matched.forEach(release => {
-      core.info(`  ${release.version}`);
-    });
-
-    const release = matched[0];
 
     if (release.detekt) {
       const url = release.detekt.url;
@@ -50,14 +42,15 @@ module.exports.getDetekt = async function getDetekt(versionSpec, token) {
       core.info(`Adding detekt binary to cache`);
       toolPath = await tc.cacheFile(downloadPath, 'detekt', 'detekt', release.version, 'all');
 
-    } else if (release.detektBundle) {
-      const url = release.detektBundle.url;
+    } else if (release.detektCli) {
+      const url = release.detektCli.url;
       core.info(`Downloading detekt-cli from ${url}`);
       const downloadPath = await tc.downloadTool(url);
 
       const extractedDir = await tc.extractZip(downloadPath);
       core.info(`Adding detekt-cli directory to cache`);
       toolPath = await tc.cacheDir(extractedDir, 'detekt-cli', release.version, 'all');
+      // The tool has a top level directory that inlcludes the version number with out 'v'
       toolPath = path.join(toolPath, `detekt-cli-${release.version}`, 'bin');
     } else {
       throw new Error(`Unknown type of detekt tool type, currently unsupported variant`);
@@ -69,13 +62,28 @@ module.exports.getDetekt = async function getDetekt(versionSpec, token) {
 }
 
 function matchVersion(releases, versionSpec) {
-  const matched = [];
+  const matched = {}
+    , versions = []
+    ;
+
   releases.forEach(release => {
     if (semver.satisfies(release.version, versionSpec)) {
-      matched.push(release);
+      versions.push(release.version);
+      matched[release.version] = release;
     }
   });
-  return matched;
+  const maxVersion = semver.maxSatisfying(versions, versionSpec);
+
+  console.log(`Matched: ${JSON.stringify(Object.keys(matched), null, 2)}`);
+  console.log(`Versions: ${JSON.stringify(versions, null, 2)}`);
+  console.log(`maxVersion: ${maxVersion}`);
+
+  if (maxVersion) {
+    const result = matched[maxVersion];
+    console.log(`Result: ${JSON.stringify(result)}`);
+    return result;
+  }
+  return undefined;
 }
 
 module.exports.getReleaseVersions = async function getReleaseVersions(token) {
@@ -91,7 +99,7 @@ module.exports.getReleaseVersions = async function getReleaseVersions(token) {
       // Filter releases to ones that include the detekt all in one executable
       const releases = releaseData.map(data => new DetektRelease(data));
       return releases.filter(release => {
-        return release.detekt !== undefined || release.detektBundle !== undefined
+        return release.detekt !== undefined || release.detektCli !== undefined
       });
     });
 
@@ -112,7 +120,7 @@ class DetektRelease {
   }
 
   get version() {
-    return this.tag;
+    return this.tag[0] === 'v' ? this.tag.substring(1) : this.tag;
   }
 
   get tag() {
@@ -144,7 +152,7 @@ class DetektRelease {
     return this.files['detekt']
   }
 
-  get detektBundle() {
+  get detektCli() {
     const filenameRegex = /detekt-cli.*\.zip/;
     let bundle = undefined;
 
