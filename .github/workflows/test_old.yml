@@ -1,4 +1,4 @@
-name: Test detekt 
+name: Test detekt - old 
 
 on:
   push:
@@ -18,7 +18,9 @@ jobs:
           - windows-latest
           - macos-latest
         detekt_version:
-          - 1.18
+          - 1.15.0
+          - 1.14.2
+          - v1.13.0
 
     runs-on: ${{ matrix.os }}
 
@@ -36,6 +38,6 @@ jobs:
         run: |
           echo "detekt ${{ steps.get_detekt.outputs.detekt }}"
 
-      - name: Run detekt CLI
+      - name: Run detekt
         run: |
-          detekt-cli --version
+          detekt --version
