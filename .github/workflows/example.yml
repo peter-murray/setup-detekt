@@ -19,9 +19,15 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Setup detekt
+        id: detekt_setup
         uses: ./
         with:
           detekt_version: ${{ env.DETEKT_RELEASE_TAG }}
+
+
+      - name: Show CLI tool contents
+        run: |
+          ls -la ${{ steps.detekt_setup.outputs.detekt }}
 
       # Performs static analysis using Detekt
       - name: Run Detekt

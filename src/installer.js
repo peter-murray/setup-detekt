@@ -11,6 +11,13 @@ const REPO = 'detekt';
 
 module.exports.getDetekt = async function getDetekt(versionSpec, token) {
   let toolPath = tc.find('detekt', versionSpec);
+  if (!toolPath) {
+    // Try to resolve the CLI variant
+    toolPath = tc.find('detekt-cli', versionSpec);
+    if (toolPath) {
+      toolPath = path.join(toolPath, 'bin');
+    }
+  }
 
   if (toolPath) {
     core.info(`Found detekt in tool cache at '${toolPath}'`);
@@ -50,7 +57,7 @@ module.exports.getDetekt = async function getDetekt(versionSpec, token) {
 
       const extractedDir = await tc.extractZip(downloadPath);
       core.info(`Adding detekt-cli directory to cache`);
-      toolPath = await tc.cacheDir(extractedDir, 'detekt', 'detekt', release.version);
+      toolPath = await tc.cacheDir(extractedDir, 'detekt-cli', release.version);
       toolPath = path.join(toolPath, 'bin');
     } else {
       throw new Error(`Unknown type of detekt tool type, currently unsupported variant`);
