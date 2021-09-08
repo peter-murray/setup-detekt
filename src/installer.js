@@ -3,12 +3,13 @@ const tc = require('@actions/tool-cache')
   , github = require('@actions/github')
   , semver = require('semver')
   , fs = require('fs').promises
-;
+  , path = require('path')
+  ;
 
 const OWNER = 'detekt';
 const REPO = 'detekt';
 
-module.exports.getDetekt = async (versionSpec, token) => {
+module.exports.getDetekt = async function getDetekt(versionSpec, token) {
   let toolPath = tc.find('detekt', versionSpec);
 
   if (toolPath) {
@@ -16,7 +17,7 @@ module.exports.getDetekt = async (versionSpec, token) => {
   } else {
     core.info(`Attempting to resolve and download detekt version ${versionSpec}`);
 
-    const releases = await getReleaseVersions(token);
+    const releases = await this.getReleaseVersions(token);
     const matched = matchVersion(releases, versionSpec);
 
     if (matched.length === 0) {
@@ -31,15 +32,29 @@ module.exports.getDetekt = async (versionSpec, token) => {
     });
 
     const release = matched[0];
-    const url = release.detekt.url;
 
-    core.info(`Downloading detekt from ${url}`);
-    const downloadPath = await tc.downloadTool(url);
-    // Need to ensure it is executable as the releases are missing the execution bit on them.
-    await fs.chmod(downloadPath, 0o755);
+    if (release.detekt) {
+      const url = release.detekt.url;
+      core.info(`Downloading detekt binary from ${url}`);
+      const downloadPath = await tc.downloadTool(url);
 
-    core.info(`Adding to cache`);
-    toolPath = await tc.cacheFile(downloadPath, 'detekt', 'detekt', release.version);
+      // Ensure that if we have the executable version of the release, the execution bit is set
+      await fs.chmod(downloadPath, 0o755);
+      core.info(`Adding detekt binary to cache`);
+      toolPath = await tc.cacheFile(downloadPath, 'detekt', 'detekt', release.version);
+
+    } else if (release.detektBundle) {
+      const url = release.detektBundle.url;
+      core.info(`Downloading detekt-cli from ${url}`);
+      const downloadPath = await tc.downloadTool(url);
+
+      const extractedDir = await tc.extractZip(downloadPath);
+      core.info(`Adding detekt-cli directory to cache`);
+      toolPath = await tc.cacheDir(extractedDir, 'detekt', 'detekt', release.version);
+      toolPath = path.join(toolPath, 'bin');
+    } else {
+      throw new Error(`Unknown type of detekt tool type, currently unsupported variant`);
+    }
     core.info('Done');
   }
 
@@ -56,7 +71,7 @@ function matchVersion(releases, versionSpec) {
   return matched;
 }
 
-async function getReleaseVersions(token) {
+module.exports.getReleaseVersions = async function getReleaseVersions(token) {
   const octokit = github.getOctokit(token);
 
   const releases = await octokit.paginate(
@@ -67,8 +82,10 @@ async function getReleaseVersions(token) {
     })
     .then(releaseData => {
       // Filter releases to ones that include the detekt all in one executable
-      const releases =  releaseData.map(data => new DetektRelease(data));
-      return releases.filter(release => !!release.detekt)
+      const releases = releaseData.map(data => new DetektRelease(data));
+      return releases.filter(release => {
+        return release.detekt !== undefined || release.detektBundle !== undefined
+      });
     });
 
   core.startGroup(`Resolved releases for ${OWNER}/${REPO}`);
@@ -80,7 +97,6 @@ async function getReleaseVersions(token) {
 
   return releases;
 }
-
 
 class DetektRelease {
 
@@ -117,7 +133,22 @@ class DetektRelease {
   }
 
   get detekt() {
-    return this.files['detekt'];
+    // v1.15.0 and earlier
+    return this.files['detekt']
+  }
+
+  get detektBundle() {
+    const filenameRegex = /detekt-cli.*\.zip/;
+    let bundle = undefined;
+
+    Object.keys(this.files).forEach(name => {
+      const match = filenameRegex.exec(name);
+      if (match) {
+        bundle = this.files[name];
+      }
+    });
+
+    return bundle;
   }
 
   get files() {
@@ -137,3 +168,4 @@ class DetektRelease {
     return files;
   }
 }
+
