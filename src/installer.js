@@ -71,11 +71,11 @@ async function getReleaseVersions(token) {
       return releases.filter(release => !!release.detekt)
     });
 
-  core.debug(`Resovled Releases for ${OWNER}/${REPO}`);
+  core.startGroup(`Resolved releases for ${OWNER}/${REPO}`);
   releases.forEach(release => {
-    core.debug(`  ${release.tag}:${release.name}`);
-    core.debug(`    published: ${release.published}`);
-    core.debug(`    stable: ${release.stable}`);
+    core.info(`  ${release.tag}:${release.name}`);
+    core.info(`    published: ${release.published}`);
+    core.info(`    stable: ${release.stable}`);
   });
 
   return releases;
