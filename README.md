@@ -37,7 +37,7 @@ executable that you need to call is `detekt-cli` and not `detekt` as is was in p
 
 ## Examples
 
-Setup detekt version `1.18` and then invoke it.
+Setup detekt version `1.20` and then invoke it.
 
 ```yml
 name: Install detekt
@@ -51,9 +51,9 @@ jobs:
 
     steps:
       - name: Setup detekt
-        uses: peter-murray/setup-detekt@v1
+        uses: peter-murray/setup-detekt@v2
         with:
-          detekt_version: 1.18
+          detekt_version: 1.20
 
       - name: Run detekt
         run: detekt-cli --version
@@ -73,7 +73,7 @@ jobs:
 
     steps:
       - name: Setup detekt
-        uses: peter-murray/setup-detekt@v1
+        uses: peter-murray/setup-detekt@v2
         with:
           detekt_version: 1.18
           add_to_path: false
@@ -100,7 +100,7 @@ jobs:
     steps:
       - name: Setup detekt
         id: setup_detekt
-        uses: peter-murray/setup-detekt@v1
+        uses: peter-murray/setup-detekt@v2
         with:
           detekt_version: v0.15
           add_to_path: false
