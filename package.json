@@ -1,6 +1,6 @@
 {
   "name": "setup-detekt",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "GitHub Action for resolving and install detekt on GitHub Action Runners",
   "main": "src/index.js",
   "scripts": {
@@ -15,15 +15,15 @@
   "author": "Peter Murray",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.5.0",
+    "@actions/core": "^1.9.0",
     "@actions/github": "^5.0.0",
-    "@actions/tool-cache": "^1.7.1",
+    "@actions/tool-cache": "^2.0.1",
     "semver": "^7.3.5"
   },
   "devDependencies": {
-    "@vercel/ncc": "^0.30.0",
-    "chai": "^4.3.4",
+    "@vercel/ncc": "^0.34.0",
+    "chai": "^4.3.6",
     "chai-string": "^1.5.0",
-    "mocha": "^9.1.1"
+    "mocha": "^10.0.0"
   }
 }

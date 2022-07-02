@@ -74,13 +74,13 @@ function matchVersion(releases, versionSpec) {
   });
   const maxVersion = semver.maxSatisfying(versions, versionSpec);
 
-  console.log(`Matched: ${JSON.stringify(Object.keys(matched), null, 2)}`);
-  console.log(`Versions: ${JSON.stringify(versions, null, 2)}`);
-  console.log(`maxVersion: ${maxVersion}`);
+  core.info(`Matched: ${JSON.stringify(Object.keys(matched), null, 2)}`);
+  core.info(`Versions: ${JSON.stringify(versions, null, 2)}`);
+  core.info(`maxVersion: ${maxVersion}`);
 
   if (maxVersion) {
     const result = matched[maxVersion];
-    console.log(`Result: ${JSON.stringify(result)}`);
+    core.info(`Result: ${JSON.stringify(result)}`);
     return result;
   }
   return undefined;
@@ -128,7 +128,7 @@ class DetektRelease {
   }
 
   get name() {
-    return this.data.name
+    return this.data.name;
   }
 
   get stable() {
@@ -144,12 +144,12 @@ class DetektRelease {
   }
 
   get published() {
-    return this.data.published_at
+    return this.data.published_at;
   }
 
   get detekt() {
     // v1.15.0 and earlier
-    return this.files['detekt']
+    return this.files['detekt'];
   }
 
   get detektCli() {
