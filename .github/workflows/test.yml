@@ -18,8 +18,8 @@ jobs:
           - windows-latest
           - macos-latest
         detekt_version:
-          - 1.18
-          - 1.20
+          - '1.18'
+          - '1.20'
 
     runs-on: ${{ matrix.os }}
 
