@@ -11,11 +11,17 @@ const REPO = 'detekt';
 
 module.exports.getDetekt = async function getDetekt(versionSpec, token) {
   let toolPath = tc.find('detekt', versionSpec, 'all');
+
   if (!toolPath) {
     // Try to resolve the CLI variant
     toolPath = tc.find('detekt-cli', versionSpec, 'all');
     if (toolPath) {
-      toolPath = path.join(toolPath, 'bin');
+      const versionRegex = /.*\/detekt-cli\/(.*)\/all/.exec(toolPath);
+      if (versionRegex) {
+        toolPath = path.join(toolPath, `detekt-cli-${versionRegex[1]}`, 'bin');
+      } else {
+        toolPath = undefined;
+      }
     }
   }
 

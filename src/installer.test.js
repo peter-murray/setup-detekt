@@ -29,6 +29,13 @@ describe('Detekt installer', () => {
       expect(toolpath).to.include('1.20');
       expect(toolpath).to.endsWith('bin');
     });
+
+    it('should get version 1.21.0', async () => {
+      const toolpath = await installer.getDetekt('1.21', testToken());
+      console.log(toolpath);
+      expect(toolpath).to.include('1.21');
+      expect(toolpath).to.endsWith('bin');
+    });
   });
 
   describe('#getReleaseVersions()', function() {
