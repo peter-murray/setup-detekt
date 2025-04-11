@@ -4,7 +4,7 @@ const core = require('@actions/core')
 
 async function run() {
   try {
-    const version = core.getInput('detekt_version', { required: true })
+    const version = core.getInput('detekt_version') || '*'
       , token = core.getInput('token', { required: true })
       , addToPath = core.getInput('add_to_path') || false
       ;
