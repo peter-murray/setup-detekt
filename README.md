@@ -26,7 +26,7 @@ executable that you need to call is `detekt-cli` and not `detekt` as is was in p
 
 ## Parameters
 
-* `detekt_version`: The version of detekt to download, defaults to `1.18`, will be changed match the the latest version in the future
+* `detekt_version`: The version of detekt to download, will download the latest version by default
 * `add_to_path`: A boolean flag indicating whether or not to add detekt to the PATH, defaults to `true`
 
 
@@ -36,6 +36,27 @@ executable that you need to call is `detekt-cli` and not `detekt` as is was in p
 
 
 ## Examples
+
+
+ Setup latest detekt version and then invoke it.
+
+ ```yml
+ name: Install detekt
+
+ on:
+   workflow_dispatch:
+
+ jobs:
+   detekt:
+     runs-on: ubuntu-latest
+
+     steps:
+       - name: Setup detekt
+         uses: peter-murray/setup-detekt@v2
+
+       - name: Run detekt
+         run: detekt-cli --version
+ ```
 
 Setup detekt version `1.20` and then invoke it.
 

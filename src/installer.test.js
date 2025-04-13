@@ -16,6 +16,12 @@ describe('Detekt installer', () => {
       process.env.RUNNER_TEMP = os.tmpdir();
     })
 
+    it('should get latest version', async () => {
+      const toolpath = await installer.getDetekt('*', testToken());
+      console.log(toolpath);
+      expect(toolpath).to.endsWith('bin');
+    });
+
     it('should get version 1.18', async () => {
       const toolpath = await installer.getDetekt('1.18', testToken());
       console.log(toolpath);
@@ -34,6 +40,13 @@ describe('Detekt installer', () => {
       const toolpath = await installer.getDetekt('1.21', testToken());
       console.log(toolpath);
       expect(toolpath).to.include('1.21');
+      expect(toolpath).to.endsWith('bin');
+    });
+
+    it('should get version 1.23.8', async () => {
+      const toolpath = await installer.getDetekt('1.23', testToken());
+      console.log(toolpath);
+      expect(toolpath).to.include('1.23');
       expect(toolpath).to.endsWith('bin');
     });
   });
