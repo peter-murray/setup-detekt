@@ -52,7 +52,7 @@ executable that you need to call is `detekt-cli` and not `detekt` as is was in p
 
      steps:
        - name: Setup detekt
-         uses: peter-murray/setup-detekt@v2
+         uses: peter-murray/setup-detekt@v3
 
        - name: Run detekt
          run: detekt-cli --version
@@ -72,7 +72,7 @@ jobs:
 
     steps:
       - name: Setup detekt
-        uses: peter-murray/setup-detekt@v2
+        uses: peter-murray/setup-detekt@v3
         with:
           detekt_version: 1.20
 
@@ -94,7 +94,7 @@ jobs:
 
     steps:
       - name: Setup detekt
-        uses: peter-murray/setup-detekt@v2
+        uses: peter-murray/setup-detekt@v3
         with:
           detekt_version: 1.18
           add_to_path: false
@@ -121,7 +121,7 @@ jobs:
     steps:
       - name: Setup detekt
         id: setup_detekt
-        uses: peter-murray/setup-detekt@v2
+        uses: peter-murray/setup-detekt@v3
         with:
           detekt_version: v0.15
           add_to_path: false
