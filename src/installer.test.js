@@ -1,49 +1,48 @@
-const chai = require('chai');
-const os = require('os');
-const installer = require('./installer');
+import { describe, it, beforeEach } from 'vitest';
+import { expect, use } from 'chai';
+import chaiString from 'chai-string';
+import * as os from 'node:os';
+import * as installer from './installer';
 
-chai.use(require('chai-string'));
-const expect = chai.expect;
+const chai = use(chaiString);
 
 describe('Detekt installer', () => {
 
   describe('#getDetekt()', function () {
-
-    this.timeout(10000);
 
     beforeEach(async () => {
       process.env.RUNNER_TOOL_CACHE = os.tmpdir();
       process.env.RUNNER_TEMP = os.tmpdir();
     })
 
-    it('should get latest version', async () => {
+    it('should get latest version', { timeout: 10000 }, async () => {
       const toolpath = await installer.getDetekt('*', testToken());
       console.log(toolpath);
       expect(toolpath).to.endsWith('bin');
     });
 
-    it('should get version 1.18', async () => {
+    it('should get version 1.18', { timeout: 10000 }, async () => {
       const toolpath = await installer.getDetekt('1.18', testToken());
       console.log(toolpath);
       expect(toolpath).to.include('1.18');
       expect(toolpath).to.endsWith('bin');
     });
 
-    it('should get version 1.20.0', async () => {
+    it('should get version 1.20.0', { timeout: 10000 }, async () => {
       const toolpath = await installer.getDetekt('1.20', testToken());
       console.log(toolpath);
       expect(toolpath).to.include('1.20');
       expect(toolpath).to.endsWith('bin');
     });
 
-    it('should get version 1.21.0', async () => {
+    it('should get version 1.21.0', { timeout: 10000 }, async () => {
       const toolpath = await installer.getDetekt('1.21', testToken());
       console.log(toolpath);
       expect(toolpath).to.include('1.21');
       expect(toolpath).to.endsWith('bin');
     });
 
-    it('should get version 1.23.8', async () => {
+    it('should get version 1.23.8', { timeout: 10000 }, async () => {
       const toolpath = await installer.getDetekt('1.23', testToken());
       console.log(toolpath);
       expect(toolpath).to.include('1.23');
@@ -53,14 +52,12 @@ describe('Detekt installer', () => {
 
   describe('#getReleaseVersions()', function() {
 
-    this.timeout(10000);
-
-    it('should get all valid releases', async () => {
+    it('should get all valid releases', { timeout: 10000 }, async () => {
       const releases = await installer.getReleaseVersions(testToken());
       expect(releases).to.have.length.greaterThan(10);
     });
 
-    it('should identify version 1.20.0 as a cli version', async () => {
+    it('should identify version 1.20.0 as a cli version', { timeout: 10000 }, async () => {
       const releases = await installer.getReleaseVersions(testToken());
 
       const matched = releases.filter(release => release.version === '1.20.0');
