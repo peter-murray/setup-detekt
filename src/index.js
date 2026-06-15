@@ -1,6 +1,5 @@
-const core = require('@actions/core')
-  , installer = require('./installer')
-  ;
+import * as core from '@actions/core';
+import * as installer from './installer.js';
 
 async function run() {
   try {

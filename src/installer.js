@@ -1,15 +1,14 @@
-const tc = require('@actions/tool-cache')
-  , core = require('@actions/core')
-  , github = require('@actions/github')
-  , semver = require('semver')
-  , fs = require('fs').promises
-  , path = require('path')
-  ;
+import * as tc from '@actions/tool-cache';
+import * as core from '@actions/core';
+import * as github from '@actions/github';
+import * as semver from 'semver';
+import { promises as fs } from 'node:fs';
+import * as path from 'node:path';
 
 const OWNER = 'detekt';
 const REPO = 'detekt';
 
-module.exports.getDetekt = async function getDetekt(versionSpec, token) {
+export async function getDetekt(versionSpec, token) {
   let toolPath = tc.find('detekt', versionSpec, 'all');
 
   if (!toolPath) {
@@ -30,7 +29,7 @@ module.exports.getDetekt = async function getDetekt(versionSpec, token) {
   } else {
     core.info(`Attempting to resolve and download detekt version ${versionSpec}`);
 
-    const releases = await this.getReleaseVersions(token);
+    const releases = await getReleaseVersions(token);
     const release = matchVersion(releases, versionSpec);
 
     if (!release) {
@@ -92,7 +91,7 @@ function matchVersion(releases, versionSpec) {
   return undefined;
 }
 
-module.exports.getReleaseVersions = async function getReleaseVersions(token) {
+export async function getReleaseVersions(token) {
   const octokit = github.getOctokit(token);
 
   const releases = await octokit.paginate(
